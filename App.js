@@ -5,7 +5,7 @@ import {
   View,
   Button,
   TextInput,
-  ScrollView,
+  FlatList,
 } from "react-native";
 
 export default function App() {
@@ -17,7 +17,10 @@ export default function App() {
   }
 
   function addGoalHandler() {
-    setGoals((currentGoals) => [...currentGoals, enteredText]);
+    setGoals((currentGoals) => [
+      ...currentGoals,
+      { key: Math.random().toString(), text: enteredText },
+    ]);
   }
 
   return (
@@ -31,15 +34,25 @@ export default function App() {
         <Button title="Add goal" onPress={addGoalHandler} />
       </View>
       <View style={styles.listContainer}>
-        <ScrollView alwaysBounceVertical={false}>
-          <Text>List of goals: </Text>
-          {goals.map((goal) => (
-            // Note: Extra wrapping by View needed to style borderRadius on iOS
-            <View key={goal} style={styles.goalItem}>
-              <Text style={styles.goalText}>{goal}</Text>
-            </View>
-          ))}
-        </ScrollView>
+        <Text>List of goals: </Text>
+        <FlatList
+          data={goals}
+          renderItem={(goal) => {
+            // Note: If goal is an object, and has 'key' or 'id' property,
+            // it will be automatically added as an element's key. There is no need to write it.
+            // There is also option to get and add key as a goal.index
+            return (
+              <View style={styles.goalItem}>
+                <Text style={styles.goalText}>{goal.item.text}</Text>
+              </View>
+            );
+          }}
+          // Change to id ===> id: Math.random().toString()
+          // keyExtractor={(item, index) => {
+          //   return item.id;
+          // }}
+          alwaysBounceVertical={false}
+        />
       </View>
     </View>
   );
